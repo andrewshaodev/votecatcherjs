@@ -27,9 +27,18 @@ export async function GET(request: NextRequest) {
       redirectTo.searchParams.delete('next')
       return NextResponse.redirect(redirectTo)
     }
+    
+    // If there's an error, redirect to error page with details
+    const errorUrl = new URL('/error', request.url)
+    errorUrl.searchParams.set('error', error.message)
+    errorUrl.searchParams.set('code', error.status?.toString() || '')
+    errorUrl.searchParams.set('details', 'Email confirmation failed')
+    return NextResponse.redirect(errorUrl)
   }
 
   // return the user to an error page with some instructions
-  redirectTo.pathname = '/error'
-  return NextResponse.redirect(redirectTo)
+  const errorUrl = new URL('/error', request.url)
+  errorUrl.searchParams.set('error', 'Invalid confirmation link')
+  errorUrl.searchParams.set('details', 'The confirmation link is invalid or has expired')
+  return NextResponse.redirect(errorUrl)
 }

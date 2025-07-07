@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/utils/supabase/server'
+import { createErrorUrl } from '@/utils/error-handler'
 
 export async function login(formData: FormData) {
   const supabase = await createClient()
@@ -18,7 +19,12 @@ export async function login(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    redirect('/error')
+    const errorUrl = createErrorUrl('http://localhost:3000', {
+      message: error.message,
+      code: error.status,
+      details: error.name
+    })
+    redirect(errorUrl)
   }
 
   revalidatePath('/', 'layout')
@@ -38,7 +44,12 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp(data)
 
   if (error) {
-    redirect('/error')
+    const errorUrl = createErrorUrl('http://localhost:3000', {
+      message: error.message,
+      code: error.status,
+      details: error.name
+    })
+    redirect(errorUrl)
   }
 
   revalidatePath('/', 'layout')
