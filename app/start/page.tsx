@@ -19,6 +19,8 @@ export default function StartPage() {
   const [campaignLoading, setCampaignLoading] = useState(false);
   const [campaignDesc, setCampaignDesc] = useState('');
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
+  // Add a constant for the create new campaign option
+  const CREATE_NEW_OPTION = '__CREATE_NEW__';
 
   const fetchCampaigns = async () => {
     setCampaignLoading(true);
@@ -68,113 +70,124 @@ export default function StartPage() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '2rem auto', padding: 24, border: '1px solid #eee', borderRadius: 8 }}>
-      <h2>API Key Manager</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <label>
-          Provider:
-          <select value={provider} onChange={e => setProvider(e.target.value)} style={{ color: 'black' }}>
-            {PROVIDERS.map(p => (
-              <option key={p.value} value={p.value}>{p.label}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          API Key:
-          <input
-            type="text"
-            placeholder="Enter your API key"
-            value={apiKey}
-            onChange={e => setApiKey(e.target.value)}
-            required
-          />
-        </label>
-        <button type="submit">Upload</button>
-      </form>
-      {message && <div style={{ marginTop: 12 }}>{message}</div>}
-      <div className="mt-8">
-        <h4 className="font-semibold mb-2">Your API Keys</h4>
-        {loading ? (
-          <div>Loading...</div>
-        ) : keys.length === 0 ? (
-          <div>No API keys found.</div>
-        ) : (
-          <>
-            <ul className="space-y-2">
-              {keys.map(k => (
-                <li key={k.provider} className="flex items-center gap-2">
-                  <span className="flex-1">{PROVIDERS.find(p => p.value === k.provider)?.label || k.provider}</span>
-                  <button
-                    type="button"
-                    aria-label={`Delete ${k.provider}`}
-                    className="text-red-500 hover:text-red-700 text-lg"
-                    onClick={async () => {
-                      if (window.confirm('Are you sure you want to delete this API key?')) {
-                        try {
-                          await deleteApiKey(k.provider);
-                          setKeys(await getUserApiKeys());
-                        } catch {
-                          setMessage('Error deleting key');
-                        }
-                      }
-                    }}
-                  >
-                    ❌
-                  </button>
-                </li>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#101010' }}>
+      <div style={{ width: '100%', maxWidth: 420, background: '#18181b', color: 'white', borderRadius: 12, boxShadow: '0 2px 8px 0 rgba(0,0,0,0.08)', padding: '2.5rem 2rem' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1.5rem', textAlign: 'center' }}>Get Started</h2>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <label style={{ fontWeight: 500 }}>LLM Provider:
+            <select
+              value={provider}
+              onChange={e => setProvider(e.target.value)}
+              style={{ color: 'black', backgroundColor: 'white', marginTop: 4, padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc', width: '100%' }}
+            >
+              {PROVIDERS.map(p => (
+                <option key={p.value} value={p.value}>{p.label}</option>
               ))}
-            </ul>
-            {/* Campaign logic below */}
-            {keys.length > 0 && (
-              <div className="mt-8">
-                <h4 className="font-semibold mb-2">Campaign</h4>
-                {campaignLoading ? (
-                  <div>Loading campaigns...</div>
-                ) : campaigns.length === 0 ? (
-                  <form
-                    onSubmit={async e => {
-                      e.preventDefault();
-                      try {
-                        const newCampaign = await createCampaign(campaignDesc);
-                        setCampaigns([newCampaign]);
-                        setSelectedCampaign(newCampaign.id);
-                        setCampaignDesc('');
-                      } catch {
-                        setMessage('Error creating campaign');
-                      }
-                    }}
-                    className="flex flex-col gap-2"
-                  >
-                    <label className="font-medium">Create a campaign description:</label>
-                    <input
-                      type="text"
-                      value={campaignDesc}
-                      onChange={e => setCampaignDesc(e.target.value)}
-                      required
-                      className="mt-1 px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition mt-2">
-                      Create Campaign
-                    </button>
-                  </form>
-                ) : (
-                  <div>
-                    <label className="font-medium">Select a campaign:</label>
-                    <select
-                      value={selectedCampaign ?? ''}
-                      onChange={e => setSelectedCampaign(e.target.value)}
-                      style={{ color: 'black', backgroundColor: 'white' }}
+            </select>
+          </label>
+          <label style={{ fontWeight: 500 }}>API Key:
+            <input
+              type="text"
+              placeholder="Enter your API key"
+              value={apiKey}
+              onChange={e => setApiKey(e.target.value)}
+              required
+              style={{ marginTop: 4, padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc', width: '100%', color: 'black', backgroundColor: 'white' }}
+            />
+          </label>
+          <button type="submit" style={{ marginTop: '1rem', padding: '0.5rem', borderRadius: 4, background: '#2563eb', color: 'white', border: 'none', fontWeight: 600 }}>Upload</button>
+        </form>
+        {message && <div style={{ marginTop: 12, textAlign: 'center', color: 'green' }}>{message}</div>}
+        <div style={{ marginTop: 32 }}>
+          <h4 style={{ fontWeight: 600, marginBottom: 8 }}>Your API Keys</h4>
+          {loading ? (
+            <div>Loading...</div>
+          ) : keys.length === 0 ? (
+            <div>No API keys found.</div>
+          ) : (
+            <>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {keys.map(k => (
+                  <li key={k.provider} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ flex: 1 }}>{PROVIDERS.find(p => p.value === k.provider)?.label || k.provider}</span>
+                    <button
+                      type="button"
+                      aria-label={`Delete ${k.provider}`}
+                      style={{ background: 'none', border: 'none', color: 'red', cursor: 'pointer', fontSize: 18 }}
+                      onClick={async () => {
+                        if (window.confirm('Are you sure you want to delete this API key?')) {
+                          try {
+                            await deleteApiKey(k.provider);
+                            setKeys(await getUserApiKeys());
+                          } catch {
+                            setMessage('Error deleting key');
+                          }
+                        }
+                      }}
                     >
-                      {campaigns.map(c => (
-                        <option key={c.id} value={c.id}>{c.description}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        )}
+                      ❌
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {/* Campaign logic below */}
+              {keys.length > 0 && (
+                <div style={{ marginTop: 32 }}>
+                  <h4 style={{ fontWeight: 600, marginBottom: 8 }}>Campaign</h4>
+                  {campaignLoading ? (
+                    <div>Loading campaigns...</div>
+                  ) : (
+                    <>
+                      <label style={{ fontWeight: 500 }}>Select or create a campaign:</label>
+                      <select
+                        value={selectedCampaign ?? ''}
+                        onChange={e => {
+                          const val = e.target.value;
+                          setSelectedCampaign(val);
+                          if (val !== CREATE_NEW_OPTION) setCampaignDesc('');
+                        }}
+                        style={{ color: 'black', backgroundColor: 'white', marginTop: 4, padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc', width: '100%' }}
+                      >
+                        {campaigns.map(c => (
+                          <option key={c.id} value={c.id}>{c.description}</option>
+                        ))}
+                        <option value={CREATE_NEW_OPTION}>Create new campaign...</option>
+                      </select>
+                      {selectedCampaign === CREATE_NEW_OPTION && (
+                        <form
+                          onSubmit={async e => {
+                            e.preventDefault();
+                            try {
+                              const newCampaign = await createCampaign(campaignDesc);
+                              setCampaigns([...campaigns, newCampaign]);
+                              setSelectedCampaign(newCampaign.id);
+                              setCampaignDesc('');
+                            } catch {
+                              setMessage('Error creating campaign');
+                            }
+                          }}
+                          style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}
+                        >
+                          <input
+                            type="text"
+                            value={campaignDesc}
+                            onChange={e => setCampaignDesc(e.target.value)}
+                            required
+                            placeholder="Campaign description"
+                            style={{ padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc', width: '100%', color: 'black', backgroundColor: 'white' }}
+                          />
+                          <button type="submit" style={{ padding: '0.5rem', borderRadius: 4, background: '#2563eb', color: 'white', border: 'none', fontWeight: 600 }}>
+                            Create Campaign
+                          </button>
+                        </form>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
