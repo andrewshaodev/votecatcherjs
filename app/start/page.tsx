@@ -21,7 +21,7 @@ export default function StartPage() {
       try {
         const data = await getUserApiKeys();
         setKeys(data);
-      } catch (e) {
+      } catch {
         setMessage('Failed to load keys');
       } finally {
         setLoading(false);
@@ -29,8 +29,8 @@ export default function StartPage() {
     })();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setMessage('');
     try {
       await uploadApiKey(provider, apiKey);
@@ -39,7 +39,7 @@ export default function StartPage() {
       // Refresh keys
       const data = await getUserApiKeys();
       setKeys(data);
-    } catch (err) {
+    } catch {
       setMessage('Error uploading key');
     }
   };
@@ -89,7 +89,7 @@ export default function StartPage() {
                       try {
                         await deleteApiKey(k.provider);
                         setKeys(await getUserApiKeys());
-                      } catch (err) {
+                      } catch {
                         setMessage('Error deleting key');
                       }
                     }

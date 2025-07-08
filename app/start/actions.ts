@@ -2,7 +2,6 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { encrypt } from '@/utils/encryption';
-import { cookies } from 'next/headers';
 
 export async function uploadApiKey(provider: string, apiKey: string) {
   const supabase = await createClient();
