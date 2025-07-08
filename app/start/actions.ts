@@ -40,4 +40,30 @@ export async function deleteApiKey(provider: string) {
     .eq('provider', provider);
   if (error) throw error;
   return { success: true };
+}
+
+export async function getUserCampaigns() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  const { data, error } = await supabase
+    .from('campaign')
+    .select('id, description')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function createCampaign(description: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  const { data, error } = await supabase
+    .from('campaign')
+    .insert({ user_id: user.id, description })
+    .select('id, description')
+    .single();
+  if (error) throw error;
+  return data;
 } 
