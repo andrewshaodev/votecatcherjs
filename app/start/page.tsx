@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { uploadApiKey, getUserApiKeys, deleteApiKey, getUserCampaigns, createCampaign } from './actions';
+import { uploadApiKey, getUserApiKeys, deleteApiKey, getUserCampaigns, createCampaign, hasVoterRecords, uploadVoterRecords } from './actions';
+import { useRouter } from 'next/navigation';
 
 const PROVIDERS = [
   { value: 'OPENAI_API_KEY', label: 'OpenAI' },
@@ -21,6 +22,11 @@ export default function StartPage() {
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
   // Add a constant for the create new campaign option
   const CREATE_NEW_OPTION = '__CREATE_NEW__';
+  const [hasVoters, setHasVoters] = useState<boolean | null>(null);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [uploadingCsv, setUploadingCsv] = useState(false);
+
+  const router = useRouter();
 
   const fetchCampaigns = async () => {
     setCampaignLoading(true);
@@ -54,6 +60,19 @@ export default function StartPage() {
     }
   }, [keys.length]);
 
+  useEffect(() => {
+    const check = async () => {
+      if (selectedCampaign && selectedCampaign !== CREATE_NEW_OPTION) {
+        try {
+          setHasVoters(await hasVoterRecords());
+        } catch {
+          setHasVoters(false);
+        }
+      }
+    };
+    check();
+  }, [selectedCampaign, campaigns.length]);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setMessage('');
@@ -67,14 +86,14 @@ export default function StartPage() {
     } catch {
       setMessage('Error uploading key');
     }
-  };
+  }
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#101010' }}>
       <div style={{ width: '100%', maxWidth: 420, background: '#18181b', color: 'white', borderRadius: 12, boxShadow: '0 2px 8px 0 rgba(0,0,0,0.08)', padding: '2.5rem 2rem' }}>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1.5rem', textAlign: 'center' }}>Get Started</h2>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <label style={{ fontWeight: 500 }}>LLM Provider:
+          <label style={{ fontWeight: 500 }}>OCR Provider:
             <select
               value={provider}
               onChange={e => setProvider(e.target.value)}
@@ -178,6 +197,38 @@ export default function StartPage() {
                           />
                           <button type="submit" style={{ padding: '0.5rem', borderRadius: 4, background: '#2563eb', color: 'white', border: 'none', fontWeight: 600 }}>
                             Create Campaign
+                          </button>
+                        </form>
+                      )}
+                      {selectedCampaign && selectedCampaign !== CREATE_NEW_OPTION && hasVoters === false && (
+                        <form
+                          onSubmit={async e => {
+                            e.preventDefault();
+                            if (!csvFile) return;
+                            setUploadingCsv(true);
+                            try {
+                              const text = await csvFile.text();
+                              await uploadVoterRecords(text, selectedCampaign);
+                              setHasVoters(true);
+                              setMessage('Voter records uploaded!');
+                              router.push('/app/desktop');
+                            } catch (err) {
+                              setMessage('Error uploading voter records');
+                            } finally {
+                              setUploadingCsv(false);
+                            }
+                          }}
+                          style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 16 }}
+                        >
+                          <label style={{ fontWeight: 500 }}>Upload voter records CSV:</label>
+                          <input
+                            type="file"
+                            accept=".csv"
+                            onChange={e => setCsvFile(e.target.files?.[0] ?? null)}
+                            style={{ color: 'white' }}
+                          />
+                          <button type="submit" disabled={!csvFile || uploadingCsv} style={{ padding: '0.5rem', borderRadius: 4, background: '#2563eb', color: 'white', border: 'none', fontWeight: 600 }}>
+                            {uploadingCsv ? 'Uploading...' : 'Upload'}
                           </button>
                         </form>
                       )}
