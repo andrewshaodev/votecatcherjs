@@ -22,7 +22,7 @@ export default function StartPage() {
         const data = await getUserApiKeys();
         setKeys(data);
       } catch {
-        setMessage('Failed to load keys');
+        // Do nothing, just leave keys as []
       } finally {
         setLoading(false);
       }
