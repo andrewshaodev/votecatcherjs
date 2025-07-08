@@ -26,14 +26,14 @@ export default function LoginPage() {
     <div className={styles.main}>
       <div className={styles.card}>
         <h1 className="text-3xl font-bold mb-4">Welcome to Votecatcher!</h1>
-        <h2>Login</h2>
-        <form ref={formRef}>
-          <label htmlFor="email">Email:</label>
-          <input id="email" name="email" type="email" required />
-          <label htmlFor="password">Password:</label>
-          <input id="password" name="password" type="password" required />
-          <button formAction={login}>Log in</button>
-          <button type="button" onClick={handleSignup}>Sign up</button>
+        <h2 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Login</h2>
+        <form ref={formRef} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <label htmlFor="email" style={{ fontWeight: 500 }}>Email:</label>
+          <input id="email" name="email" type="email" required style={{ padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc' }} />
+          <label htmlFor="password" style={{ fontWeight: 500 }}>Password:</label>
+          <input id="password" name="password" type="password" required style={{ padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc' }} />
+          <button formAction={login} style={{ marginTop: '1rem', padding: '0.5rem', borderRadius: 4, background: '#2563eb', color: 'white', border: 'none', fontWeight: 600 }}>Log in</button>
+          <button type="button" onClick={handleSignup} style={{ marginTop: '0.5rem', padding: '0.5rem', borderRadius: 4, background: '#e5e7eb', color: '#111', border: 'none', fontWeight: 600 }}>Sign up</button>
         </form>
       </div>
     </div>
