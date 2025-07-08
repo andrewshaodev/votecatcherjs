@@ -26,7 +26,7 @@ export default function DesktopPage() {
       try {
         const data = await getUserCampaigns();
         setCampaigns(data);
-        if (data.length > 0) setSelectedCampaign(data[0].id);
+        setSelectedCampaign(null); // Do not auto-select
       } catch {
         setCampaigns([]);
       }
@@ -59,9 +59,10 @@ export default function DesktopPage() {
             <>
               <select
                 value={selectedCampaign ?? ''}
-                onChange={e => setSelectedCampaign(e.target.value)}
+                onChange={e => setSelectedCampaign(e.target.value || null)}
                 style={{ color: 'black', backgroundColor: 'white', marginBottom: 8, padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc', width: '100%' }}
               >
+                <option value="">Choose a Campaign</option>
                 {campaigns.map(c => (
                   <option key={c.id} value={c.id}>{c.description}</option>
                 ))}
@@ -121,6 +122,8 @@ export default function DesktopPage() {
           <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: 16 }}>Voter Records</h2>
           {voterLoading ? (
             <div>Loading voter records...</div>
+          ) : !selectedCampaign ? (
+            <div>Choose a Campaign</div>
           ) : voterRecords.length === 0 ? (
             <div>No voter records found for this campaign.</div>
           ) : (
@@ -130,9 +133,12 @@ export default function DesktopPage() {
                   <tr>
                     {Object.keys(voterRecords[0])
                       .filter(key => !['id', 'created_at', 'campaign_id'].includes(key))
-                      .map(key => (
-                        <th key={key} style={{ borderBottom: '1px solid #444', padding: '0.5rem', textAlign: 'left' }}>{key.replace(/_/g, ' ')}</th>
-                      ))}
+                      .map(key => {
+                        const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                        return (
+                          <th key={key} style={{ borderBottom: '1px solid #444', padding: '0.5rem', textAlign: 'left' }}>{label}</th>
+                        );
+                      })}
                   </tr>
                 </thead>
                 <tbody>
