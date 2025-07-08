@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { uploadApiKey, getUserApiKeys, deleteApiKey, getUserCampaigns, createCampaign, hasVoterRecords, uploadVoterRecords } from './actions';
+import { uploadApiKey, getUserApiKeys, deleteApiKey, getUserCampaigns, createCampaign, hasVoterRecords, uploadVoterRecords, hasEverythingForStartup } from './actions';
 import { useRouter } from 'next/navigation';
 
 const PROVIDERS = [
@@ -42,6 +42,13 @@ export default function StartPage() {
   };
 
   useEffect(() => {
+    // Redirect to /desktop if user has everything
+    (async () => {
+      const ready = await hasEverythingForStartup();
+      if (ready) {
+        router.replace('/desktop');
+      }
+    })();
     (async () => {
       try {
         const data = await getUserApiKeys();

@@ -128,4 +128,32 @@ export async function getVoterRecordsForCampaign(campaignId: string) {
     .limit(50);
   if (error) throw error;
   return data || [];
+}
+
+export async function hasEverythingForStartup() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  // Check API keys
+  const { count: apiKeyCount } = await supabase
+    .from('api_keys')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id);
+  if (!apiKeyCount || apiKeyCount === 0) return false;
+
+  // Check campaigns
+  const { data: campaigns } = await supabase
+    .from('campaign')
+    .select('id')
+    .eq('user_id', user.id);
+  if (!campaigns || campaigns.length === 0) return false;
+
+  // Check voter records for any campaign
+  const campaignIds = campaigns.map(c => c.id);
+  const { count: voterCount } = await supabase
+    .from('voter_records')
+    .select('id', { count: 'exact', head: true })
+    .in('campaign_id', campaignIds);
+  return (voterCount ?? 0) > 0;
 } 
