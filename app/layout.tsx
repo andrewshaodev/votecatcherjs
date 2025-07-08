@@ -1,11 +1,12 @@
 import './globals.css'
+import Link from 'next/link';
 
 export const metadata = {
   title: 'Votecatcher',
   description: 'An open-source tool to automate signature validation for ballot initiatives using OCR and fuzzy matching.',
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
