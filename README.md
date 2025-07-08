@@ -56,6 +56,23 @@ npm run build
 npm start
 ```
 
+#### Changing the Allowed Hostname
+
+To allow your own domain (for example, when deploying to production):
+
+1. Open `middleware.ts`.
+2. Find the `allowedHosts` array:
+   ```js
+   const allowedHosts = ['localhost:3000', 'localhost']
+   ```
+3. Add your domain to the list, for example:
+   ```js
+   const allowedHosts = ['yourdomain.com', 'localhost:3000', 'localhost']
+   ```
+4. Redeploy your app.
+
+> **Note:** If you deploy to a different domain, you must add it here or requests will be blocked with a 403 error.
+
 ---
 
 ## 📄 License
