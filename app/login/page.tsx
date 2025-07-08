@@ -13,8 +13,8 @@ export default function LoginPage() {
     const formData = new FormData(formRef.current);
     try {
       await signup(formData);
-    } catch (err: any) {
-      if (err?.message === 'SIGNUP_CONFIRM_EMAIL') {
+    } catch (err: unknown) {
+      if (typeof err === 'object' && err !== null && 'message' in err && (err as { message?: string }).message === 'SIGNUP_CONFIRM_EMAIL') {
         window.alert('Please confirm your email, then login');
       } else {
         window.alert('Sign up failed. Please try again.');
