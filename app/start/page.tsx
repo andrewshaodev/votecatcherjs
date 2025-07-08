@@ -211,7 +211,7 @@ export default function StartPage() {
                               await uploadVoterRecords(text, selectedCampaign);
                               setHasVoters(true);
                               setMessage('Voter records uploaded!');
-                              router.push('/app/desktop');
+                              router.push('/desktop');
                             } catch (err) {
                               setMessage('Error uploading voter records');
                             } finally {
