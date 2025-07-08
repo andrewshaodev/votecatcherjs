@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { getErrorFromUrl, logError, type ErrorInfo } from '@/utils/error-handler'
 
-export default function ErrorPage() {
+function ErrorPageContent() {
   const searchParams = useSearchParams()
   const [errorInfo, setErrorInfo] = useState<ErrorInfo | null>(null)
 
@@ -91,5 +91,13 @@ export default function ErrorPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ErrorPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ErrorPageContent />
+    </Suspense>
   )
 }
