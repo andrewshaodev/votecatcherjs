@@ -4,10 +4,6 @@ const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 if (!ENCRYPTION_KEY) {
   throw new Error('ENCRYPTION_KEY environment variable is not set. Please set it in your environment.');
 }
-// Debug logging for key issues
-console.log('[ENCRYPTION_KEY DEBUG] Value:', JSON.stringify(ENCRYPTION_KEY));
-console.log('[ENCRYPTION_KEY DEBUG] String length:', ENCRYPTION_KEY.length);
-console.log('[ENCRYPTION_KEY DEBUG] Buffer length:', Buffer.from(ENCRYPTION_KEY).length);
 const IV_LENGTH = 16; // AES block size
 
 export function encrypt(text: string): string {
