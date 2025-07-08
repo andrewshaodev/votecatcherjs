@@ -5,6 +5,7 @@ export default function LoginPage() {
   return (
     <div className={styles.main}>
       <div className={styles.card}>
+        <h1 className="text-3xl font-bold mb-4">Welcome to Votecatcher!</h1>
         <h2>Login</h2>
         <form>
           <label htmlFor="email">Email:</label>
