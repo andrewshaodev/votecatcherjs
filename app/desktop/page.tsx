@@ -17,7 +17,17 @@ export default function DesktopPage() {
   const [ocrPrompt, setOcrPrompt] = useState(DEFAULT_PROMPT);
   const [campaigns, setCampaigns] = useState<{ id: string, description: string }[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
-  const [voterRecords, setVoterRecords] = useState<any[]>([]);
+  type VoterRecord = {
+    first_name: string;
+    last_name: string;
+    street_number: string;
+    street_name: string;
+    street_type: string;
+    street_dir_suffix: string;
+    // Add other fields if needed, but exclude id, created_at, campaign_id since they're filtered out
+    [key: string]: string;
+  };
+  const [voterRecords, setVoterRecords] = useState<VoterRecord[]>([]);
   const [voterLoading, setVoterLoading] = useState(false);
   const [ballotSignatureFile, setBallotSignatureFile] = useState<File | null>(null);
 
@@ -44,8 +54,6 @@ export default function DesktopPage() {
       .catch(() => setVoterRecords([]))
       .finally(() => setVoterLoading(false));
   }, [selectedCampaign]);
-
-  const selectedCampaignObj = campaigns.find(c => c.id === selectedCampaign);
 
   return (
     <div style={{ minHeight: '100vh', width: '100vw', display: 'flex', background: '#101010', color: 'white', margin: 0, padding: 0 }}>
@@ -145,8 +153,8 @@ export default function DesktopPage() {
                   {voterRecords.map((row, i) => (
                     <tr key={i} style={{ borderBottom: '1px solid #333' }}>
                       {Object.entries(row)
-                        .filter(([key]) => !['id', 'created_at', 'campaign_id'].includes(key))
-                        .map(([key, val], j) => (
+                        .filter(([field]) => !['id', 'created_at', 'campaign_id'].includes(field))
+                        .map(([, val], j) => (
                           <td key={j} style={{ padding: '0.5rem', borderBottom: '1px solid #333' }}>{String(val)}</td>
                         ))}
                     </tr>

@@ -212,7 +212,7 @@ export default function StartPage() {
                               setHasVoters(true);
                               setMessage('Voter records uploaded!');
                               router.push('/desktop');
-                            } catch (err) {
+                            } catch {
                               setMessage('Error uploading voter records');
                             } finally {
                               setUploadingCsv(false);
