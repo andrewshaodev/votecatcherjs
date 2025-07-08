@@ -53,5 +53,6 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/account')
+  // Instead of redirect, throw a special error for the client to catch
+  throw new Error('SIGNUP_CONFIRM_EMAIL')
 }
