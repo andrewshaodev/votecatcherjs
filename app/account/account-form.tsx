@@ -23,7 +23,7 @@ export default function AccountForm({ user }: { user: User | null }) {
         .single()
 
       if (error && status !== 406) {
-        console.log(error)
+        console.log('Profile error:', error)
         throw error
       }
 
@@ -33,7 +33,8 @@ export default function AccountForm({ user }: { user: User | null }) {
         setWebsite(data.website)
         setAvatarUrl(data.avatar_url)
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Error loading user data:', err)
       alert('Error loading user data!')
     } finally {
       setLoading(false)
@@ -67,7 +68,8 @@ export default function AccountForm({ user }: { user: User | null }) {
       })
       if (error) throw error
       alert('Profile updated!')
-    } catch (error) {
+    } catch (err) {
+      console.error('Error updating profile:', err)
       alert('Error updating the data!')
     } finally {
       setLoading(false)

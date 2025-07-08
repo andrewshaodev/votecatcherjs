@@ -28,8 +28,8 @@ export default function Avatar({
 
         const url = URL.createObjectURL(data)
         setAvatarUrl(url)
-      } catch (error) {
-        console.log('Error downloading image: ', error)
+      } catch (err) {
+        console.log('Error downloading image: ', err)
       }
     }
 
@@ -55,7 +55,8 @@ export default function Avatar({
       }
 
       onUpload(filePath)
-    } catch (error) {
+    } catch (err) {
+      console.error('Error uploading avatar:', err)
       alert('Error uploading avatar!')
     } finally {
       setUploading(false)
