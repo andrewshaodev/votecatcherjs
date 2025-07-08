@@ -60,6 +60,13 @@ export default function StartPage() {
     }
   }, [keys.length]);
 
+  // If there are no campaigns, default to CREATE_NEW_OPTION
+  useEffect(() => {
+    if (!campaignLoading && campaigns.length === 0 && keys.length > 0) {
+      setSelectedCampaign(CREATE_NEW_OPTION);
+    }
+  }, [campaignLoading, campaigns.length, keys.length]);
+
   useEffect(() => {
     const check = async () => {
       if (selectedCampaign && selectedCampaign !== CREATE_NEW_OPTION) {
