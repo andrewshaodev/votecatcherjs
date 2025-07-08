@@ -60,7 +60,7 @@ npm start
 
 To allow your own domain (for example, when deploying to production):
 
-1. Open `middleware.ts`.
+1. Open [`middleware.ts`](middleware.ts).
 2. Find the `allowedHosts` array:
    ```js
    const allowedHosts = ['localhost:3000', 'localhost']
