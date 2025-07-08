@@ -1,7 +1,15 @@
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
+  // Check allowed hosts
+  const host = request.headers.get('host')
+  const allowedHosts = ['demo.votecatcher.org', 'localhost:3000', 'localhost']
+  
+  if (!host || !allowedHosts.includes(host)) {
+    return NextResponse.json({ error: 'Unauthorized host' }, { status: 403 })
+  }
+
   // update user's auth session
   return await updateSession(request)
 }
